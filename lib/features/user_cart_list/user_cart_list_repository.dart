@@ -8,8 +8,9 @@ class UserCartListRepository with BaseRepository {
     try {
       final prefs = await SharedPreferences.getInstance();
       List<String>? userProductCart = prefs.getStringList(token);
-      print('---------------------------------------------------------->' +
-          '$userProductCart');
+
+      print(
+          '------------------------------------------------------> ${userProductCart}');
 
       List<Product> cartProductList = [];
       if (userProductCart != null && userProductCart.isNotEmpty) {
@@ -17,12 +18,13 @@ class UserCartListRepository with BaseRepository {
           final res = await dio.get('/products/${int.parse(id)}');
           cartProductList.add(Product.fromJson(res.data));
         }
-        print('------------------------------------------------------------>' +
-            cartProductList.length.toString());
+        print(
+            '------------------------------------------------------> END END END END');
         return cartProductList;
       }
       return null;
     } catch (e) {
+      print('------------------------------------------------------> ${e}');
       throw Exception(e);
     }
   }

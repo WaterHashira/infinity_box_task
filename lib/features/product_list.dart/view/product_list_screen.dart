@@ -296,12 +296,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         color: Colors.black,
                       ),
                       onPressed: () {
+                        String txt = _searchController.text.toLowerCase();
                         BlocProvider.of<ProductListBloc>(
                           context,
                           listen: false,
                         ).add(SearchProductListRequested(
-                            product: _searchController.text,
-                            productList: productsList));
+                            product: txt, productList: productsList));
                         Navigator.of(context).pop();
                       },
                     ),

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:infinity_box_task/features/product_details.dart/model/product.dart';
 import 'package:infinity_box_task/utils/base_repository.dart';
 
@@ -6,20 +5,14 @@ class ProductListRepository with BaseRepository {
   //getting the list of all the product categories available
   Future<List<String>> getProductCategories() async {
     try {
-      print(
-          '------------------------------------------------------------------------------------------------------------------------------------------->sssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
       final res = await dio.get('/products/categories');
       List<String> categories = [];
       for (var category in res.data) {
         categories.add(category.toString());
       }
-      print(
-          'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNDDDDDDDDDDDDDDDDDDDDDDD');
-      print(res.data);
+
       return categories;
     } catch (e) {
-      print(
-          'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR----------------> $e');
       throw Exception(e);
     }
   }
@@ -27,20 +20,14 @@ class ProductListRepository with BaseRepository {
   //getting the list of all available products
   Future<List<Product>> getAllProducts() async {
     try {
-      print(
-          '------------------------------------------------------------------------------------------------------------------------------------------->sssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
       final res = await dio.get('/products');
       List<Product> allProducts = [];
       for (var pro in res.data) {
         allProducts.add(Product.fromJson(pro));
       }
-      print(
-          'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNDDDDDDDDDDDDDDDDDDDDDDD');
-      print(res.data);
+
       return allProducts;
     } catch (e) {
-      print(
-          'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR----------------> $e');
       throw Exception(e);
     }
   }
@@ -64,12 +51,11 @@ class ProductListRepository with BaseRepository {
       String searchString, List<Product> productList) async {
     List<Product> searchProducts = [];
     for (Product pro in productList) {
-      if (pro.title.contains(searchString)) {
+      String title = pro.title.toLowerCase();
+      if (title.contains(searchString)) {
         searchProducts.add(pro);
       }
     }
-    print(
-        '--------------------------------------------------------------------> ${searchProducts.length}');
     return searchProducts;
   }
 }

@@ -10,8 +10,7 @@ class LoginRepository with BaseRepository {
 
     try {
       final res = await dio.post('/auth/login', data: jsonEncode(body));
-      print('----------------------------------------------> ' +
-          res.data['token']);
+
       return res.data['token'];
     } catch (e) {
       throw Exception('Login failed! Please try again');

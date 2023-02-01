@@ -69,9 +69,12 @@ class CartCard extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       Expanded(
-                        child: Text(
-                          product.title,
-                          style: Theme.of(context).textTheme.headline2,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            product.title,
+                            style: Theme.of(context).textTheme.headline2,
+                          ),
                         ),
                       ),
                       Expanded(

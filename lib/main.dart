@@ -3,7 +3,8 @@ import 'package:infinity_box_task/theme/app_theme.dart';
 import 'package:infinity_box_task/utils/globals.dart';
 import 'package:infinity_box_task/utils/route_generator.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
