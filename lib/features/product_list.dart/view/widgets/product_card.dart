@@ -5,7 +5,8 @@ import 'package:infinity_box_task/utils/color_constants.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
-  const ProductCard({super.key, required this.product});
+  final String token;
+  const ProductCard({super.key, required this.product, required this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class ProductCard extends StatelessWidget {
     return InkWell(
       child: GestureDetector(
         onTap: () => Navigator.pushNamed(context, ProductDetailsScreen.id,
-            arguments: {'product': product}),
+            arguments: {'product': product, 'token': token}),
         child: Container(
           decoration: BoxDecoration(
               boxShadow: const [
@@ -59,6 +60,8 @@ class ProductCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           product.title,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.headline2,
                         ),
                       ),

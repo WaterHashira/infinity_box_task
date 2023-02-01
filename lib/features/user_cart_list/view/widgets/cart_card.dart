@@ -6,7 +6,12 @@ import 'package:infinity_box_task/utils/color_constants.dart';
 class CartCard extends StatelessWidget {
   final Product product;
   final VoidCallback deleteOnTap;
-  const CartCard({super.key, required this.product, required this.deleteOnTap});
+  final String token;
+  const CartCard(
+      {super.key,
+      required this.product,
+      required this.deleteOnTap,
+      required this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +19,9 @@ class CartCard extends StatelessWidget {
     return InkWell(
       child: GestureDetector(
         onTap: () => Navigator.pushNamed(context, ProductDetailsScreen.id,
-            arguments: {'product': product}),
+            arguments: {'product': product, 'token': token}),
         child: Container(
-          height: screenSize.height / 3,
+          height: screenSize.height / 1.7,
           decoration: BoxDecoration(
               boxShadow: const [
                 BoxShadow(blurRadius: 15.0, offset: Offset(0, 15))
@@ -34,7 +39,7 @@ class CartCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
                             image: NetworkImage(product.imageUrl),
-                            fit: BoxFit.fill),
+                            fit: BoxFit.cover),
                       ),
                     ),
                     Padding(
@@ -42,12 +47,15 @@ class CartCard extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.bottomRight,
                         child: Container(
-                          padding: const EdgeInsets.all(2),
+                          padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             color: ColorConstants.greenAccent,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Text('Available'),
+                          child: Text(
+                            'Available',
+                            style: Theme.of(context).textTheme.headline2,
+                          ),
                         ),
                       ),
                     ),
@@ -67,6 +75,15 @@ class CartCard extends StatelessWidget {
                         ),
                       ),
                       Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Category: ${product.category}',
+                            style: Theme.of(context).textTheme.headline2,
+                          ),
+                        ),
+                      ),
+                      Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -79,37 +96,17 @@ class CartCard extends StatelessWidget {
                                       .headline3
                                       ?.fontSize),
                             ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  const WidgetSpan(
-                                    child: Icon(
-                                      Icons.star,
-                                      size: 14,
-                                      color: ColorConstants.golden,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                      text: ' ${product.rating['rate']}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline3),
-                                ],
+                            Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: ElevatedButton(
+                                onPressed: deleteOnTap,
+                                child: const Text('Remove from Cart'),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: ElevatedButton(
-                    onPressed: deleteOnTap,
-                    child: const Text('Delete'),
                   ),
                 ),
               ),

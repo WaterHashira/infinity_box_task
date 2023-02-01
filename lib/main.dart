@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:infinity_box_task/features/product_details.dart/model/product.dart';
 import 'package:infinity_box_task/theme/app_theme.dart';
 import 'package:infinity_box_task/utils/globals.dart';
 import 'package:infinity_box_task/utils/route_generator.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override

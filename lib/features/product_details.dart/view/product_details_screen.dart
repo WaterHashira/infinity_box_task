@@ -5,7 +5,6 @@ import 'package:infinity_box_task/features/product_details.dart/model/product.da
 import 'package:infinity_box_task/features/product_details.dart/product_details_repository.dart';
 import 'package:infinity_box_task/features/user_cart_list/view/user_cart_list_screen.dart';
 import 'package:infinity_box_task/utils/color_constants.dart';
-import 'package:infinity_box_task/widgets/custom_bottom_navigation_bar.dart';
 import 'package:infinity_box_task/widgets/custom_snack_bar.dart';
 import 'package:infinity_box_task/widgets/loading_overlay.dart';
 import 'package:infinity_box_task/widgets/star_rating_bar.dart';
@@ -67,7 +66,6 @@ class ProductDetailsScreen extends StatelessWidget {
                         ))
                   ],
                 ),
-                bottomNavigationBar: const CustomBottomNavigationBar(),
                 body: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,9 +148,8 @@ class ProductDetailsScreen extends StatelessWidget {
                                             Row(
                                               children: <Widget>[
                                                 StarRatingBar(
-                                                  movieRating: product
-                                                      .rating['rate']!
-                                                      .round(), //TODO: dont round off fill the starts acc to double value
+                                                  productRating:
+                                                      product.rating['rate']!,
                                                   ratingBarBackgroundColor:
                                                       ColorConstants
                                                           .inactiveRatingBarColor,

@@ -8,6 +8,8 @@ class UserCartListRepository with BaseRepository {
     try {
       final prefs = await SharedPreferences.getInstance();
       List<String>? userProductCart = prefs.getStringList(token);
+      print('---------------------------------------------------------->' +
+          '$userProductCart');
 
       List<Product> cartProductList = [];
       if (userProductCart != null && userProductCart.isNotEmpty) {
@@ -30,6 +32,7 @@ class UserCartListRepository with BaseRepository {
     try {
       final prefs = await SharedPreferences.getInstance();
       List<String>? userProductCart = prefs.getStringList(token);
+
       if (userProductCart != null && userProductCart.isNotEmpty) {
         if (userProductCart.contains(productId.toString())) {
           userProductCart.remove(productId.toString());

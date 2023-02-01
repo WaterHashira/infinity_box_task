@@ -7,7 +7,6 @@ import 'package:infinity_box_task/features/product_list.dart/product_list_reposi
 import 'package:infinity_box_task/features/product_list.dart/view/widgets/product_card.dart';
 import 'package:infinity_box_task/features/user_cart_list/view/user_cart_list_screen.dart';
 import 'package:infinity_box_task/utils/color_constants.dart';
-import 'package:infinity_box_task/widgets/custom_bottom_navigation_bar.dart';
 import 'package:infinity_box_task/widgets/custom_snack_bar.dart';
 import 'package:infinity_box_task/widgets/loading_overlay.dart';
 
@@ -24,9 +23,8 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  final ScrollController _scrollController = ScrollController();
-
   CategoryChipDeatils categoryChipDeatils = CategoryChipDeatils();
+
   List<Product> allProductsList = [];
   List<Product> productsList = [];
 
@@ -46,18 +44,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
             if (state is AllProductListSuccess) {
               productsList = state.allProductsList;
               allProductsList = state.allProductsList;
-
-              categoryChipDeatils.categories = state.productCategoryList;
-              categoryChipDeatils.count = state.productCategoryList.length;
+              categoryChipDetailsSetter(
+                  categoryChipDeatils, state.productCategoryList);
             } else if (state is AllProductListFailure) {
               showErrorSnackBar('Oops! Something went Wrong');
             } else if (state is FilterProductListSuccess) {
               productsList = state.filterProductsList;
             } else if (state is FilterProductListFaliure) {
-              showErrorSnackBar('Oops! Something went Wrong');
-            } else if (state is SearchProductListSuccess) {
-              productsList = state.searchProductsList;
-            } else if (state is SearchProductListFaliure) {
               showErrorSnackBar('Oops! Something went Wrong');
             }
           },
@@ -97,9 +90,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       child: TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, UserCartListScreen.id,
-                                arguments: {
-                                  'token': widget.token,
-                                });
+                                arguments: {'token': widget.token});
                           },
                           child: RichText(
                             text: const TextSpan(children: [
@@ -117,7 +108,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     )
                   ],
                 ),
-                bottomNavigationBar: const CustomBottomNavigationBar(),
                 body: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
@@ -157,6 +147,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           onSelected: (val) {
                                             if (val) {
                                               setState(() {
+                                                categoryChipDeatils
+                                                        .chipBackgroundColors =
+                                                    List.filled(
+                                                        categoryChipDeatils
+                                                            .count,
+                                                        ColorConstants
+                                                            .inactiveRatingBarColor);
+                                                categoryChipDeatils
+                                                        .chipTextColors =
+                                                    List.filled(
+                                                        categoryChipDeatils
+                                                            .count,
+                                                        ColorConstants
+                                                            .activeRatingBarColor);
                                                 categoryChipDeatils
                                                         .chipTextColors[index] =
                                                     activeChipTextColor;
@@ -234,7 +238,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     child: ScaleAnimation(
                                       child: FadeInAnimation(
                                         child: ProductCard(
-                                            product: productsList[index]),
+                                          product: productsList[index],
+                                          token: widget.token,
+                                        ),
                                       ),
                                     ),
                                   );
@@ -257,41 +263,60 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   //searchTextField ModalSheet method
   Widget _searchModalSheet(Size screenSize, BuildContext context) {
-    return Container(
-      height: screenSize.height / 3,
-      padding: const EdgeInsets.all(30),
-      color: ColorConstants.inactiveRatingBarColor,
-      child: Center(
-        child: Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              suffixIcon: IconButton(
-                icon: const Icon(
-                  Icons.search,
-                  color: Colors.black,
+    return BlocProvider<ProductListBloc>(
+      create: (_) => ProductListBloc(ProductListRepository()),
+      child: BlocConsumer<ProductListBloc, ProductListState>(
+        listener: (context, state) {
+          if (state is SearchProductListSuccess) {
+            (state.searchProductsList.isEmpty)
+                ? showErrorSnackBar('No results found!')
+                : setState(() {
+                    productsList = state.searchProductsList;
+                  });
+          } else if (state is SearchProductListFaliure) {
+            showErrorSnackBar('Oops! Something went Wrong');
+          }
+        },
+        builder: (context, state) {
+          return Container(
+            height: screenSize.height / 2,
+            padding: const EdgeInsets.all(30),
+            color: ColorConstants.inactiveRatingBarColor,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.search,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        BlocProvider.of<ProductListBloc>(
+                          context,
+                          listen: false,
+                        ).add(SearchProductListRequested(
+                            product: _searchController.text,
+                            productList: productsList));
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        borderSide: BorderSide(color: Colors.blue)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Product Name',
+                  ),
                 ),
-                onPressed: () {
-                  BlocProvider.of<ProductListBloc>(
-                    context,
-                    listen: false,
-                  ).add(SearchProductListRequested(
-                      product: _searchController.text,
-                      productList: productsList));
-                  Navigator.of(context).pop();
-                },
               ),
-              focusedBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  borderSide: BorderSide(color: Colors.blue)),
-              filled: true,
-              fillColor: Colors.white,
-              hintText: 'Product Name',
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -310,6 +335,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 }
 
+//for setting up the categoryChipDetails instance
+void categoryChipDetailsSetter(
+    CategoryChipDeatils categoryChipDeatils, List<String> productCategoryList) {
+  categoryChipDeatils.categories = productCategoryList;
+  categoryChipDeatils.count = productCategoryList.length;
+  categoryChipDeatils.chipBackgroundColors = List.filled(
+      categoryChipDeatils.count, ColorConstants.inactiveRatingBarColor);
+  categoryChipDeatils.chipTextColors = List.filled(
+      categoryChipDeatils.count, ColorConstants.activeRatingBarColor);
+  categoryChipDeatils.isSelected =
+      List.filled(categoryChipDeatils.count, false);
+}
+
 //its instance contains the details of all the current category filters
 class CategoryChipDeatils {
   int count;
@@ -323,10 +361,5 @@ class CategoryChipDeatils {
       this.categories = const <String>[],
       this.chipBackgroundColors = const <Color>[],
       this.chipTextColors = const <Color>[],
-      this.isSelected = const <bool>[]}) {
-    chipBackgroundColors =
-        List.filled(count, ColorConstants.inactiveRatingBarColor);
-    chipTextColors = List.filled(count, ColorConstants.activeRatingBarColor);
-    isSelected = List.filled(count, false);
-  }
+      this.isSelected = const <bool>[]});
 }

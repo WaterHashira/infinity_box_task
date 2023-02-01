@@ -4,11 +4,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:infinity_box_task/utils/color_constants.dart';
 
 class StarRatingBar extends StatelessWidget {
-  final int movieRating;
+  final double productRating;
   final Color ratingBarBackgroundColor;
   const StarRatingBar(
       {Key? key,
-      required this.movieRating,
+      required this.productRating,
       required this.ratingBarBackgroundColor})
       : super(key: key);
 
@@ -24,7 +24,7 @@ class StarRatingBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           RatingBarIndicator(
-              rating: movieRating.toDouble(),
+              rating: productRating,
               itemCount: 5,
               itemSize: 12.0,
               physics: const BouncingScrollPhysics(),
@@ -42,7 +42,7 @@ class StarRatingBar extends StatelessWidget {
             width: 4.0,
           ),
           Text(
-            '$movieRating/5',
+            '$productRating/5',
             style: Theme.of(context).textTheme.headline4,
           ),
         ],

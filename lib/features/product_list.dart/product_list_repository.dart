@@ -68,6 +68,8 @@ class ProductListRepository with BaseRepository {
         searchProducts.add(pro);
       }
     }
+    print(
+        '--------------------------------------------------------------------> ${searchProducts.length}');
     return searchProducts;
   }
 }

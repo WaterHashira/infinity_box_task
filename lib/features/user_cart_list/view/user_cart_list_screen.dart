@@ -5,17 +5,18 @@ import 'package:infinity_box_task/features/user_cart_list/bloc/user_cart_list_bl
 import 'package:infinity_box_task/features/user_cart_list/user_cart_list_repository.dart';
 import 'package:infinity_box_task/features/user_cart_list/view/widgets/cart_card.dart';
 import 'package:infinity_box_task/utils/color_constants.dart';
-import 'package:infinity_box_task/widgets/custom_bottom_navigation_bar.dart';
 import 'package:infinity_box_task/widgets/custom_snack_bar.dart';
 import 'package:infinity_box_task/widgets/loading_overlay.dart';
 
 class UserCartListScreen extends StatelessWidget {
   static const id = 'UserCartListScreen';
 
-  String token;
+  final String token;
   UserCartListScreen({super.key, required this.token});
 
   List<Product>? productList;
+
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,6 @@ class UserCartListScreen extends StatelessWidget {
                 appBar: AppBar(
                   title: const Text('Your Cart'),
                 ),
-                bottomNavigationBar: const CustomBottomNavigationBar(),
                 body: (productList == null)
                     ? Center(
                         child: Text(
@@ -57,27 +57,18 @@ class UserCartListScreen extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               flex: 10,
-                              child: ListView.builder(
-                                itemCount: productList!.length,
-                                itemBuilder: (context, index) {
-                                  return Column(
-                                    children: <Widget>[
-                                      CartCard(
-                                          product: productList![index],
-                                          deleteOnTap: () {
-                                            BlocProvider.of<UserCartListBloc>(
-                                                    context)
-                                                .add(DeleteCartItem(
-                                                    token: token,
-                                                    id: productList![index]
-                                                        .id));
-                                          }),
-                                      const SizedBox(
-                                        height: 15,
-                                      )
-                                    ],
-                                  );
-                                },
+                              child: RefreshIndicator(
+                                onRefresh: () => Navigator.pushReplacementNamed(
+                                    context, UserCartListScreen.id,
+                                    arguments: {'token': token}),
+                                child: AnimatedList(
+                                  key: _listKey,
+                                  initialItemCount: productList!.length,
+                                  itemBuilder: (context, index, animation) {
+                                    return _buildItem(productList![index],
+                                        index, animation, context);
+                                  },
+                                ),
                               ),
                             ),
                             Expanded(
@@ -93,7 +84,7 @@ class UserCartListScreen extends StatelessWidget {
                                   ),
                                   child: Center(
                                     child: Text(
-                                        'Total Price: ${totalPriceCalculator()}'),
+                                        'Total Price:  ₹ ${totalPriceCalculator()}'),
                                   ),
                                 ),
                               ),
@@ -118,5 +109,37 @@ class UserCartListScreen extends StatelessWidget {
       }
     }
     return totalPrice;
+  }
+
+  Widget _buildItem(Product product, int productIndex,
+      Animation<double> animation, BuildContext context) {
+    return SizeTransition(
+      sizeFactor: animation,
+      child: Column(
+        children: <Widget>[
+          CartCard(
+            product: product,
+            deleteOnTap: () => _removeSingleItems(context, productIndex),
+            token: token,
+          ),
+          const SizedBox(
+            height: 15,
+          )
+        ],
+      ),
+    );
+  }
+
+  void _removeSingleItems(BuildContext context, int productIndex) {
+    BlocProvider.of<UserCartListBloc>(context)
+        .add(DeleteCartItem(token: token, id: productList![productIndex].id));
+
+    Product removedItem = productList!.removeAt(productIndex);
+    builder(context, animation) {
+      // A method to build the Card widget.
+      return _buildItem(removedItem, productIndex, animation, context);
+    }
+
+    _listKey.currentState!.removeItem(productIndex, builder);
   }
 }
