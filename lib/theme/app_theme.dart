@@ -154,7 +154,7 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       headline1: TextStyle(
-        fontSize: getAdaptiveSize(20),
+        fontSize: getAdaptiveSize(32),
         color: const Color(0xFFFFFFFF),
         fontFamily: _defaultFontFamily,
         fontWeight: FontWeight.w600,

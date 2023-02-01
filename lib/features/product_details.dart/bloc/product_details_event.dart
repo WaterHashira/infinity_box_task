@@ -5,7 +5,7 @@ abstract class AddToCartEvent {
 }
 
 class AddToCartRequested extends AddToCartEvent {
-  final String currUserEmail;
+  final String currUserToken;
   final int productId;
-  AddToCartRequested({required this.currUserEmail, required this.productId});
+  AddToCartRequested({required this.currUserToken, required this.productId});
 }

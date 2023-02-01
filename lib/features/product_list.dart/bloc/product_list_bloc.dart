@@ -54,7 +54,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     emit(const ProductListLoading());
     try {
       final List<Product> searchProductsList =
-          await _repo.getSearchProducts(event.product);
+          await _repo.getSearchProducts(event.product, event.productList);
       emit(SearchProductListSuccess(searchProductsList: searchProductsList));
     } catch (e) {
       emit(SearchProductListFaliure(e.toString()));

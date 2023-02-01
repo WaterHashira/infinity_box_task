@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinity_box_task/features/product_details.dart/bloc/product_details_bloc.dart';
 import 'package:infinity_box_task/features/product_details.dart/model/product.dart';
 import 'package:infinity_box_task/features/product_details.dart/product_details_repository.dart';
+import 'package:infinity_box_task/features/user_cart_list/view/user_cart_list_screen.dart';
 import 'package:infinity_box_task/utils/color_constants.dart';
 import 'package:infinity_box_task/widgets/custom_bottom_navigation_bar.dart';
 import 'package:infinity_box_task/widgets/custom_snack_bar.dart';
@@ -13,8 +14,9 @@ class ProductDetailsScreen extends StatelessWidget {
   static const id = 'ProductDetailsScreen';
 
   final Product product;
-  String currUserEmail = 'lakshay6632@gmail.com';
-  ProductDetailsScreen({super.key, required this.product});
+  final String token;
+  const ProductDetailsScreen(
+      {super.key, required this.product, required this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +45,11 @@ class ProductDetailsScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(5),
                         child: InkWell(
                           child: TextButton(
-                              onPressed:
-                                  () {}, //TODO: navigate to user's cart page
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, UserCartListScreen.id,
+                                    arguments: {'token': token});
+                              },
                               child: RichText(
                                 text: const TextSpan(children: [
                                   WidgetSpan(
@@ -74,7 +79,7 @@ class ProductDetailsScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: NetworkImage(product.imageUrl),
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
@@ -115,7 +120,7 @@ class ProductDetailsScreen extends StatelessWidget {
                             Padding(
                                 padding: const EdgeInsets.only(left: 20),
                                 child: Text(
-                                  product.title,
+                                  'Category: ${product.category}',
                                   style: Theme.of(context).textTheme.headline4,
                                 )),
                             const SizedBox(
@@ -139,17 +144,37 @@ class ProductDetailsScreen extends StatelessWidget {
                                         padding:
                                             const EdgeInsets.only(left: 20),
                                         child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            StarRatingBar(
-                                              movieRating: product
-                                                  .rating['rate']!
-                                                  .round(), //TODO: dont round off fill the starts acc to double value
-                                              ratingBarBackgroundColor:
-                                                  ColorConstants
-                                                      .inactiveRatingBarColor,
+                                            Row(
+                                              children: <Widget>[
+                                                StarRatingBar(
+                                                  movieRating: product
+                                                      .rating['rate']!
+                                                      .round(), //TODO: dont round off fill the starts acc to double value
+                                                  ratingBarBackgroundColor:
+                                                      ColorConstants
+                                                          .inactiveRatingBarColor,
+                                                ),
+                                                Text(
+                                                    ' (${product.rating['count']!.toInt()})'),
+                                              ],
                                             ),
-                                            Text(
-                                                ' (${product.rating['count']!.toInt()})'),
+                                            Container(
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: ColorConstants.redAccent,
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Text(
+                                                '₹ ${product.price}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline2,
+                                              ),
+                                            ),
                                           ],
                                         )))
                                 : const SizedBox(),
@@ -162,7 +187,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                   onPressed: () {
                                     BlocProvider.of<ProductDetailsBloc>(context)
                                         .add(AddToCartRequested(
-                                            currUserEmail: currUserEmail,
+                                            currUserToken: token,
                                             productId: product.id));
                                   },
                                   child: RichText(

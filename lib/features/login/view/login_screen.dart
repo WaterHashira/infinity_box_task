@@ -1,5 +1,6 @@
 import 'package:infinity_box_task/features/login/bloc/login_bloc.dart';
 import 'package:infinity_box_task/features/login/login_repository.dart';
+import 'package:infinity_box_task/features/product_list.dart/view/product_list_screen.dart';
 import 'package:infinity_box_task/utils/generics.dart';
 import 'package:infinity_box_task/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class LoginScreen extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  String emailAddress = '';
+  String userName = '';
   String password = '';
 
   final _formKey = GlobalKey<FormState>();
@@ -30,7 +31,8 @@ class LoginScreen extends StatelessWidget {
           listener: (context, state) {
             if (state is LoginSuccess) {
               showSuccessSnackBar('Logged in successfully!');
-              //Navigator.pushNamed(context, PaymentScreen.id);
+              Navigator.pushNamed(context, ProductListScreen.id,
+                  arguments: {'token': state.token});
             } else if (state is LoginFailure) {
               showErrorSnackBar('Logged Falied! Please try again');
             }
@@ -51,10 +53,15 @@ class LoginScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 30),
                       InputField(
-                        title: 'Email address',
-                        keyboardType: TextInputType.emailAddress,
-                        validator: validateEmail,
-                        onChanged: (v) => emailAddress = v!.trim(),
+                        title: 'Username',
+                        keyboardType: TextInputType.name,
+                        validator: (v) {
+                          if (isNullOrBlank(v)) {
+                            return 'Please enter a valid password!';
+                          }
+                          return null;
+                        },
+                        onChanged: (v) => userName = v!.trim(),
                       ),
                       const SizedBox(height: 15),
                       InputField(
@@ -78,7 +85,7 @@ class LoginScreen extends StatelessWidget {
                               listen: false,
                             ).add(
                               LoginRequested(
-                                emailAddress: emailAddress,
+                                userName: userName,
                                 password: password,
                               ),
                             );
@@ -87,51 +94,6 @@ class LoginScreen extends StatelessWidget {
                         child: const Text('Login'),
                       ),
                       const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const Expanded(
-                            child: Divider(
-                              indent: 10,
-                              endIndent: 10,
-                              thickness: 1,
-                            ),
-                          ),
-                          Text(
-                            'or',
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                          const Expanded(
-                            child: Divider(
-                              indent: 10,
-                              endIndent: 10,
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 25),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Don\'t have an account?',
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                              ),
-                            ),
-                            onPressed: () {},
-                            /*Navigator.pushReplacementNamed(
-                              context,
-                              SignUpScreen.id,
-                            ),*/
-                            child: const Text('Sign Up'),
-                          )
-                        ],
-                      ),
                     ],
                   ),
                 ),

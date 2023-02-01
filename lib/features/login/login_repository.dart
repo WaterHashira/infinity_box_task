@@ -1,17 +1,18 @@
-class LoginRepository {
-  Future<void> logInUser(
-      {required String emailAddress, required String password}) async {
-    /* try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        throw Exception('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        throw Exception('Wrong password provided for that user.');
-      }
-    }*/
+import 'dart:convert';
+
+import 'package:infinity_box_task/utils/base_repository.dart';
+
+class LoginRepository with BaseRepository {
+  //method for logging in the user
+  Future<String> logInUser(
+      {required String userName, required String password}) async {
+    Map<String, String> body = {'username': userName, 'password': password};
+
+    try {
+      final res = await dio.post('/auth/login', data: jsonEncode(body));
+      return res.data['token'];
+    } catch (e) {
+      throw Exception('Login failed! Please try again');
+    }
   }
 }
-
-//TODO: rightfully describe the login method

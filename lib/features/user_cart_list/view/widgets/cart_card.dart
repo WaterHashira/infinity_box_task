@@ -3,9 +3,10 @@ import 'package:infinity_box_task/features/product_details.dart/model/product.da
 import 'package:infinity_box_task/features/product_details.dart/view/product_details_screen.dart';
 import 'package:infinity_box_task/utils/color_constants.dart';
 
-class ProductCard extends StatelessWidget {
+class CartCard extends StatelessWidget {
   final Product product;
-  const ProductCard({super.key, required this.product});
+  final VoidCallback deleteOnTap;
+  const CartCard({super.key, required this.product, required this.deleteOnTap});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class ProductCard extends StatelessWidget {
         onTap: () => Navigator.pushNamed(context, ProductDetailsScreen.id,
             arguments: {'product': product}),
         child: Container(
+          height: screenSize.height / 3,
           decoration: BoxDecoration(
               boxShadow: const [
                 BoxShadow(blurRadius: 15.0, offset: Offset(0, 15))
@@ -24,6 +26,7 @@ class ProductCard extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Expanded(
+                flex: 3,
                 child: Stack(
                   children: <Widget>[
                     Container(
@@ -52,6 +55,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               Expanded(
+                flex: 3,
                 child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(
@@ -97,6 +101,15 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: ElevatedButton(
+                    onPressed: deleteOnTap,
+                    child: const Text('Delete'),
                   ),
                 ),
               ),

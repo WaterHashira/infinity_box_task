@@ -3,19 +3,19 @@ import 'package:infinity_box_task/utils/base_repository.dart';
 
 class ProductDetailsRepository with BaseRepository {
   //saving the given product in firestore 'cart' collection
-  Future<void> addToCart(String email, int productId) async {
+  Future<void> addToCart(String token, int productId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      List<String>? userProductCart = prefs.getStringList(email);
+      List<String>? userProductCart = prefs.getStringList(token);
       if (userProductCart != null) {
         if (!userProductCart.contains(productId.toString())) {
           userProductCart.add(productId.toString());
-          await prefs.setStringList(email, userProductCart);
+          await prefs.setStringList(token, userProductCart);
         }
       } else {
         List<String> cart = [];
         cart.add(productId.toString());
-        await prefs.setStringList(email, cart);
+        await prefs.setStringList(token, cart);
       }
     } catch (e) {
       throw Exception(e);

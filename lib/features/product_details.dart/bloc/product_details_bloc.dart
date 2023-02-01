@@ -16,7 +16,7 @@ class ProductDetailsBloc extends Bloc<AddToCartEvent, AddToCartState> {
   ) async {
     emit(const AddToCartLoading());
     try {
-      await _repo.addToCart(event.currUserEmail, event.productId);
+      await _repo.addToCart(event.currUserToken, event.productId);
       emit(const AddToCartSuccess());
     } catch (e) {
       emit(AddToCartFailure(e.toString()));

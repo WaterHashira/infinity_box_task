@@ -16,6 +16,8 @@ class FilterProductListRequested extends ProductListEvent {
 
 class SearchProductListRequested extends ProductListEvent {
   final String product;
+  final List<Product> productList;
 
-  SearchProductListRequested({required this.product});
+  SearchProductListRequested(
+      {required this.product, required this.productList});
 }

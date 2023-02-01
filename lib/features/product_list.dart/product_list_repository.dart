@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:infinity_box_task/features/product_details.dart/model/product.dart';
 import 'package:infinity_box_task/utils/base_repository.dart';
 
@@ -5,16 +6,20 @@ class ProductListRepository with BaseRepository {
   //getting the list of all the product categories available
   Future<List<String>> getProductCategories() async {
     try {
+      print(
+          '------------------------------------------------------------------------------------------------------------------------------------------->sssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
       final res = await dio.get('/products/categories');
-      print('---------------------------------------------->' + res.data);
       List<String> categories = [];
       for (var category in res.data) {
-        categories.add(categories.toString());
+        categories.add(category.toString());
       }
+      print(
+          'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNDDDDDDDDDDDDDDDDDDDDDDD');
+      print(res.data);
       return categories;
     } catch (e) {
       print(
-          '------------------------------------------------->' + e.toString());
+          'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR----------------> $e');
       throw Exception(e);
     }
   }
@@ -55,9 +60,14 @@ class ProductListRepository with BaseRepository {
   }
 
   //getting the list of all available products searched
-  Future<List<Product>> getSearchProducts(String productName) async {
+  Future<List<Product>> getSearchProducts(
+      String searchString, List<Product> productList) async {
     List<Product> searchProducts = [];
-    return Future.delayed(const Duration(seconds: 3))
-        .then((value) => searchProducts);
+    for (Product pro in productList) {
+      if (pro.title.contains(searchString)) {
+        searchProducts.add(pro);
+      }
+    }
+    return searchProducts;
   }
 }
